@@ -3,123 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESTEVE 2.0 - Ingeniería</title>
+    <title>ESTEVE 2.0 - Ingeniería y Suministros</title>
     <style>
         :root { --p: #f39c12; --bg: #0f0f0f; --card: #1a1a1a; --text: #e0e0e0; }
         body { font-family: sans-serif; background: var(--bg); color: var(--text); padding: 15px; margin: 0; }
-        .header { text-align: center; padding: 20px 0; border-bottom: 2px solid var(--p); margin-bottom: 20px; }
-        .card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        h3 { color: var(--p); margin-top: 0; font-size: 1.1em; border-bottom: 1px solid #333; padding-bottom: 5px; }
-        label { display: block; font-size: 0.85em; color: #888; margin-top: 10px; }
-        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; background: #252525; border: 1px solid #333; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 1em; }
-        button { width: 100%; padding: 15px; background: var(--p); border: none; color: #000; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 1em; margin-top: 10px; }
-        .res-box { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #2a2a2a; font-size: 0.95em; }
+        .header { text-align: center; padding: 10px; border-bottom: 2px solid var(--p); margin-bottom: 20px; }
+        .card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid var(--p); }
+        h3 { color: var(--p); margin: 0 0 10px 0; font-size: 1.1em; text-transform: uppercase; }
+        label { display: block; font-size: 0.8em; color: #888; margin-top: 10px; }
+        input, select { width: 100%; padding: 12px; margin-top: 5px; background: #252525; border: 1px solid #333; color: #fff; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: var(--p); border: none; color: #000; font-weight: bold; border-radius: 8px; margin-top: 15px; cursor: pointer; font-size: 1.1em; }
+        .res-box { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #2a2a2a; font-size: 0.9em; }
         .val { color: #2ecc71; font-weight: bold; }
-        #wa-btn { background: #25d366; color: #fff; margin-top: 15px; display:none; }
+        #wa-btn { background: #25d366; color: #fff; display:none; }
+        .seccion-titulo { color: #f39c12; font-weight: bold; margin-top: 15px; border-bottom: 1px solid #f39c12; display: block; }
     </style>
 </head>
 <body>
-
-<div class="header">
-    <h1 style="margin:0; font-size: 1.4em;">ESTEVE 2.0</h1>
-    <span style="font-size: 0.8em; color: #888;">Cálculo de Materiales Fotovoltaicos</span>
-</div>
+<div class="header"><h1>ESTEVE 2.0</h1></div>
 
 <div class="card">
     <h3>🏗️ Datos de Estructura</h3>
-    <label>Nombre de la Obra</label>
-    <input type="text" id="obra" placeholder="Ej: Caldes Porc">
+    <label>Nombre de la Obra</label><input type="text" id="obra" placeholder="Ej: Nave Industrial">
     <div style="display:flex; gap:10px;">
         <div style="flex:1;"><label>Nº Placas</label><input type="number" id="nP" value="10"></div>
-        <div style="flex:1;"><label>Potencia (W)</label><input type="number" id="pP" value="550"></div>
+        <div style="flex:1;"><label>Nº Filas</label><input type="number" id="nF" value="1"></div>
     </div>
     <div style="display:flex; gap:10px;">
         <div style="flex:1;"><label>Ancho Placa (m)</label><input type="number" id="aP" step="0.01" value="1.13"></div>
-        <div style="flex:1;"><label>Nº Filas</label><input type="number" id="nF" value="1"></div>
+        <div style="flex:1;"><label>Tipo Tejado</label><select id="tejado"><option value="Bovedilla">Bovedilla (Químico)</option><option value="Sandwich">Sandwich (Autoroscante)</option></select></div>
     </div>
 </div>
 
 <div class="card">
-    <h3>🔌 Datos Eléctricos (Ley de Ohm)</h3>
+    <h3>🔌 Datos Eléctricos</h3>
     <div style="display:flex; gap:10px;">
-        <div style="flex:1;"><label>Inversores</label><input type="number" id="nI" value="1"></div>
-        <div style="flex:1;"><label>Potencia Inv (kW)</label><input type="number" id="pI" value="5"></div>
+        <div style="flex:1;"><label>Pot. Inv (kW)</label><input type="number" id="pI" value="5"></div>
+        <div style="flex:1;"><label>Fases</label><select id="fases"><option value="1">Monofásico</option><option value="3">Trifásico</option></select></div>
     </div>
     <div style="display:flex; gap:10px;">
-        <div style="flex:1;"><label>M. Continua (DC)</label><input type="number" id="mDC" value="20"></div>
         <div style="flex:1;"><label>M. Alterna (AC)</label><input type="number" id="mAC" value="10"></div>
+        <div style="flex:1;"><label>M. Continua (DC)</label><input type="number" id="mDC" value="20"></div>
     </div>
-    <label>Tejado</label>
-    <select id="tejado">
-        <option value="Bovedilla">Viga / Bovedilla (Taco Químico)</option>
-        <option value="Sandwich">Sandwich / Chapa (Autoroscante)</option>
-    </select>
 </div>
 
-<div class="card">
-    <h3>🎙️ Observaciones</h3>
-    <textarea id="obs" placeholder="Dicta o escribe aquí..."></textarea>
-</div>
-
-<button onclick="generar()">CALCULAR MATERIALES</button>
-
+<button onclick="calcular()">GENERAR LISTADO COMPLETO</button>
 <div id="resultado"></div>
-<button id="wa-btn" onclick="enviarWA()">📤 ENVIAR PEDIDO ALMACÉN</button>
+<button id="wa-btn" onclick="enviar()">📤 ENVIAR ALMACÉN POR WHATSAPP</button>
 
 <script>
-    let mensajeWA = "";
-
-    function generar() {
+    let msg = "";
+    function calcular() {
         const obra = document.getElementById('obra').value || "Sin nombre";
         const nP = parseInt(document.getElementById('nP').value);
-        const pP = parseInt(document.getElementById('pP').value);
-        const aP = parseFloat(document.getElementById('aP').value);
         const nF = parseInt(document.getElementById('nF').value);
-        const pI = parseFloat(document.getElementById('pI').value) * parseInt(document.getElementById('nI').value);
+        const aP = parseFloat(document.getElementById('aP').value);
+        const pI = parseFloat(document.getElementById('pI').value);
+        const fases = parseInt(document.getElementById('fases').value);
         const mAC = parseFloat(document.getElementById('mAC').value);
         const mDC = parseFloat(document.getElementById('mDC').value);
         const tejado = document.getElementById('tejado').value;
-        const obs = document.getElementById('obs').value;
 
-        // Estructura (2cm entre placas + 10cm margen lateral)
-        const pPorFila = nP / nF;
-        const mFila = (aP * pPorFila) + (0.02 * (pPorFila - 1)) + 0.20;
+        // CÁLCULOS ESTRUCTURA
+        const mFila = (aP * (nP/nF)) + (0.02 * ((nP/nF)-1)) + 0.20;
         const mTotal = mFila * 2 * nF;
-        const fijaciones = (Math.ceil(mFila / 1.5) + 1) * 2 * nF;
+        const fijaciones = (Math.ceil(mFila/1.3)+1)*2*nF; // Fijación cada 1.3m aprox
+        
+        // TORNILLERÍA
+        const arandelas = fijaciones * 2;
+        const growers = fijaciones;
+        const tuercas = fijaciones;
+        const tamices = tejado === "Bovedilla" ? fijaciones : 0;
+        const botesQuimico = tejado === "Bovedilla" ? Math.ceil(fijaciones / 8) : 0;
+        const autoroscantes = tejado === "Sandwich" ? fijaciones * 4 : 0;
 
-        // Ley de Ohm (V=400 si P>15kW)
-        const esTrif = pI > 15;
-        const amp = (pI * 1000) / (esTrif ? 400 * 1.732 : 230);
-        let cable = amp < 30 ? 6 : amp < 45 ? 10 : amp < 65 ? 16 : 25;
+        // CANALIZACIÓN (1 grapa cada 1.5m)
+        const totalMetros = mAC + mDC;
+        const grapasMet = Math.ceil(totalMetros / 1.5);
+        const tornillosTacos = grapasMet;
 
-        let resHtml = `
-            <div class="card" style="border-left: 5px solid #2ecc71; margin-top:20px;">
-                <h3>📦 Listado de Materiales</h3>
-                <div class="res-box"><span>Metros Perfil:</span> <span class="val">${mTotal.toFixed(2)} m</span></div>
-                <div class="res-box"><span>Anclajes:</span> <span class="val">${Math.ceil(fijaciones)} uds</span></div>
-                <div class="res-box"><span>Arandelas/Grower:</span> <span class="val">${Math.ceil(fijaciones*2)} uds</span></div>
-                <div class="res-box"><span>Sección Cable AC:</span> <span class="val">${cable} mm² RZ1-K</span></div>
-                <div class="res-box"><span>Clips Masa / Ojos:</span> <span class="val">${nP} / ${nF*2} uds</span></div>
-                <div class="res-box"><span>Canalización (soportes):</span> <span class="val">${Math.ceil((mAC+mDC)/1.5)} uds</span></div>
-            </div>
-        `;
+        // ELÉCTRICO
+        const amp = (pI * 1000) / (fases === 3 ? 692 : 230);
+        let cable = amp < 25 ? 6 : amp < 40 ? 10 : 16;
+        let mag = amp < 16 ? 16 : amp < 20 ? 20 : amp < 25 ? 25 : amp < 32 ? 32 : 40;
 
-        document.getElementById('resultado').innerHTML = resHtml;
-        document.getElementById('wa-btn').style.display = 'block';
-
-        mensajeWA = `*PEDIDO ALMACÉN: ${obra}*%0A` +
-                    `--------------------------%0A` +
-                    `📏 *Perfil:* ${mTotal.toFixed(2)}m%0A` +
-                    `🔩 *Anclajes:* ${Math.ceil(fijaciones)} uds%0A` +
-                    `⚙️ *Tornillería (x2):* ${Math.ceil(fijaciones*2)} uds%0A` +
-                    `🔌 *Cable AC:* ${cable}mm²%0A` +
-                    `🏠 *Fijación:* ${tejado === 'Bovedilla' ? 'Químico+Tamiz' : 'Autoroscante'}%0A` +
-                    `📝 *Obs:* ${obs}`;
-    }
-
-    function enviarWA() {
-        window.open(`https://wa.me/?text=${mensajeWA}`, '_blank');
-    }
-</script>
-</body>
-</html>
+        document.getElementById('resultado').innerHTML = `
+            <div class="card" style="border-left-color: #2ecc71">
+                <span class="seccion-titulo">🏗️ ESTRUCTURA Y FIJACIÓN</span>
+                <div class="res-box"><span>Perfil:</span><span class="val">${mTotal.toFixed(2)}m</span></div>
+                <div class="res-box"><span>Escuadras/Arranques:</span><span class="val">${fijaciones} uds</span></div>
+                ${tejado === "Bovedilla" ? `
+                    <div class="res-box"><span>Taco Químico:</span><span class="val">${botesQuimico} botes</span></div>
+                    <div class="res-box"><span>Tamices:</span><span class="val">${tamices} uds</span></div>
+                ` : `
+                    <div class="res-box"><span>Autoroscantes:</span><span class="val">${autoroscantes} uds</span></div>
+                `}
+                <div class="res-box"><span>Arandelas / Growers:</span><span class="val">${arandelas} / ${growers}</span></div>
+                
+                <span class="seccion-titulo">🔌 PROTECCIONES Y CABLE</span>
+                <div class="res-box"><span>Magneto / Dif:</span><span class="val">${fases}P ${mag}A / Clase A</span></div>
+                <div class="res-box"><span>Sección Cable:</span><span class="val">${cable}mm²</span></div>
+                
+                <span class="seccion-titulo">🗄️ CANALIZACIÓN</span>
+                <div class="res-box"><span>Grapas Metálicas:</span><span class="val">${grapasMet} uds</span></div>
+                <div class="res-box"><span>Tornillos + Tacos:</span><span
