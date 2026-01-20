@@ -1,1 +1,121 @@
-# JorEs-2.0
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESTEVE 2.0 - Ingeniería Total</title>
+    <style>
+        :root { --p: #f39c12; --bg: #0f0f0f; --card: #1a1a1a; --text: #e0e0e0; }
+        body { font-family: sans-serif; background: var(--bg); color: var(--text); padding: 15px; margin: 0; }
+        .header { text-align: center; padding: 20px 0; border-bottom: 2px solid var(--p); margin-bottom: 20px; }
+        .card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        h3 { color: var(--p); margin-top: 0; font-size: 1.1em; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        label { display: block; font-size: 0.85em; color: #888; margin-top: 10px; }
+        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; background: #252525; border: 1px solid #333; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 1em; }
+        button { width: 100%; padding: 15px; background: var(--p); border: none; color: #000; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 1em; margin-top: 10px; }
+        .res-box { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #2a2a2a; font-size: 0.95em; }
+        .val { color: #2ecc71; font-weight: bold; }
+        #wa-btn { background: #25d366; color: #fff; margin-top: 15px; display:none; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1 style="margin:0; font-size: 1.4em;">ESTEVE 2.0</h1>
+    <span style="font-size: 0.8em; color: #888;">Ingeniería Fotovoltaica Completa</span>
+</div>
+
+<div class="card">
+    <h3>🏗️ Estructura y Placas</h3>
+    <label>Nombre de la Obra</label>
+    <input type="text" id="obra" placeholder="Ej: Caldes Porc">
+    <div style="display:flex; gap:10px;">
+        <div style="flex:1;"><label>Nº Placas</label><input type="number" id="nP" value="10"></div>
+        <div style="flex:1;"><label>Ancho Placa (m)</label><input type="number" id="aP" step="0.01" value="1.13"></div>
+    </div>
+    <div style="display:flex; gap:10px;">
+        <div style="flex:1;"><label>Nº Filas</label><input type="number" id="nF" value="1"></div>
+        <div style="flex:1;"><label>Tipo Tejado</label><select id="tejado"><option value="Bovedilla">Bovedilla</option><option value="Sandwich">Sandwich</option></select></div>
+    </div>
+</div>
+
+<div class="card">
+    <h3>🔌 Electricidad y Protecciones</h3>
+    <div style="display:flex; gap:10px;">
+        <div style="flex:1;"><label>Potencia Inv (kW)</label><input type="number" id="pI" value="5"></div>
+        <div style="flex:1;"><label>Fases</label><select id="fases"><option value="1">Monofásico</option><option value="3">Trifásico</option></select></div>
+    </div>
+    <div style="display:flex; gap:10px;">
+        <div style="flex:1;"><label>M. Continua (DC)</label><input type="number" id="mDC" value="20"></div>
+        <div style="flex:1;"><label>M. Alterna (AC)</label><input type="number" id="mAC" value="10"></div>
+    </div>
+</div>
+
+<div class="card">
+    <h3>🎙️ Observaciones</h3>
+    <textarea id="obs" placeholder="Notas de la visita..."></textarea>
+</div>
+
+<button onclick="generar()">CALCULAR TODO EL MATERIAL</button>
+
+<div id="resultado"></div>
+<button id="wa-btn" onclick="enviarWA()">📤 ENVIAR PEDIDO ALMACÉN</button>
+
+<script>
+    let mensajeWA = "";
+
+    function generar() {
+        const obra = document.getElementById('obra').value || "Sin nombre";
+        const nP = parseInt(document.getElementById('nP').value);
+        const aP = parseFloat(document.getElementById('aP').value);
+        const nF = parseInt(document.getElementById('nF').value);
+        const pI = parseFloat(document.getElementById('pI').value);
+        const fases = parseInt(document.getElementById('fases').value);
+        const mAC = parseFloat(document.getElementById('mAC').value);
+        const mDC = parseFloat(document.getElementById('mDC').value);
+        const tejado = document.getElementById('tejado').value;
+
+        // ESTRUCTURA
+        const pPorFila = nP / nF;
+        const mFila = (aP * pPorFila) + (0.02 * (pPorFila - 1)) + 0.20;
+        const mTotal = mFila * 2 * nF;
+        const fijaciones = (Math.ceil(mFila / 1.5) + 1) * 2 * nF;
+
+        // LEY DE OHM Y PROTECCIONES
+        const amp = (pI * 1000) / (fases === 3 ? 400 * 1.732 : 230);
+        let cable = amp < 25 ? 6 : amp < 40 ? 10 : amp < 60 ? 16 : 25;
+        
+        // Magneto: Siguiente valor estándar
+        let magneto = amp < 16 ? 16 : amp < 20 ? 20 : amp < 25 ? 25 : amp < 32 ? 32 : amp < 40 ? 40 : amp < 50 ? 50 : 63;
+        let diferencial = "Clase A / 30mA";
+
+        let resHtml = `
+            <div class="card" style="border-left: 5px solid #2ecc71;">
+                <h3>📦 Listado Almacén</h3>
+                <div class="res-box"><span>Perfil:</span> <span class="val">${mTotal.toFixed(2)} m</span></div>
+                <div class="res-box"><span>Tornillería (Grower/Aran):</span> <span class="val">${Math.ceil(fijaciones*2)} uds</span></div>
+                <div class="res-box"><span>Sección Cable AC:</span> <span class="val">${cable} mm²</span></div>
+                <div class="res-box"><span>Magnetotérmico:</span> <span class="val">${fases}P - ${magneto}A</span></div>
+                <div class="res-box"><span>Diferencial:</span> <span class="val">${fases === 3 ? '4P' : '2P'} - ${diferencial}</span></div>
+                <div class="res-box"><span>Tubo AC (Alterna):</span> <span class="val">${mAC} m</span></div>
+                <div class="res-box"><span>Canaleta/Tubo DC (Continua):</span> <span class="val">${mDC} m</span></div>
+            </div>
+        `;
+
+        document.getElementById('resultado').innerHTML = resHtml;
+        document.getElementById('wa-btn').style.display = 'block';
+
+        mensajeWA = `*PEDIDO: ${obra}*%0A` +
+                    `📏 Perfil: ${mTotal.toFixed(2)}m%0A` +
+                    `🔩 Tornillería: ${Math.ceil(fijaciones*2)} uds%0A` +
+                    `⚡ Magneto: ${fases}P ${magneto}A%0A` +
+                    `🛡️ Diferencial: ${fases === 3 ? '4P' : '2P'} Clase A%0A` +
+                    `🔌 Cable AC: ${cable}mm²%0A` +
+                    `🏗️ Tubo AC: ${mAC}m / DC: ${mDC}m%0A` +
+                    `🌍 Tierra: ${nP} clips / ${nF*2} ojos`;
+    }
+
+    function enviarWA() { window.open(`https://wa.me/?text=${mensajeWA}`, '_blank'); }
+</script>
+</body>
+</html>
