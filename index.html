@@ -106,4 +106,14 @@
                 
                 <span class="seccion-titulo">🗄️ CANALIZACIÓN</span>
                 <div class="res-box"><span>Grapas Metálicas:</span><span class="val">${grapasMet} uds</span></div>
-                <div class="res-box"><span>Tornillos + Tacos:</span><span
+                <div class="res-box"><span>Tornillos + Tacos:</span><span class="val">${tornillosTacos} uds</span></div>
+                <div class="res-box"><span>Metros (AC/DC):</span><span class="val">${mAC}m / ${mDC}m</span></div>
+            </div>`;
+        
+        document.getElementById('wa-btn').style.display = 'block';
+        msg = `*PEDIDO MATERIAL: ${obra}*%0A*ESTRUCTURA:*%0A- Perfil: ${mTotal.toFixed(2)}m%0A- Fijaciones: ${fijaciones} uds%0A- Arandelas: ${arandelas}%0A- Growers: ${growers}%0A${tejado==="Bovedilla"?`- Químico: ${botesQuimico} botes / ${tamices} tamices`:`- Autoroscantes: ${autoroscantes}`}%0A*ELÉCTRICO:*%0A- Magneto: ${fases}P ${mag}A%0A- Diferencial: Clase A%0A- Cable: ${cable}mm²%0A*CANALIZACIÓN:*%0A- Grapas Met: ${grapasMet}%0A- Tornillo+Taco: ${tornillosTacos}%0A- Tubo AC: ${mAC}m / DC: ${mDC}m`;
+    }
+    function enviar() { window.open(`https://wa.me/?text=${msg}`, '_blank'); }
+</script>
+</body>
+</html>
