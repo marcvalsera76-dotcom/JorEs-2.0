@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESTEVE 2.0 - Ingeniería e IA</title>
+    <title>ESTEVE 2.0 - IA + VOZ</title>
     <style>
         :root { --p: #f39c12; --bg: #0f0f0f; --card: #1a1a1a; --text: #e0e0e0; }
         body { font-family: sans-serif; background: var(--bg); color: var(--text); padding: 15px; margin: 0; }
@@ -11,97 +11,94 @@
         .card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid var(--p); }
         h3 { color: var(--p); margin: 0 0 10px 0; font-size: 1.1em; text-transform: uppercase; }
         label { display: block; font-size: 0.8em; color: #888; margin-top: 10px; }
-        input, select { width: 100%; padding: 12px; margin-top: 5px; background: #252525; border: 1px solid #333; color: #fff; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background: var(--p); border: none; color: #000; font-weight: bold; border-radius: 8px; margin-top: 15px; cursor: pointer; font-size: 1.1em; width: 100%; }
+        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; background: #252525; border: 1px solid #333; color: #fff; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: var(--p); border: none; color: #000; font-weight: bold; border-radius: 8px; margin-top: 15px; cursor: pointer; font-size: 1.1em; }
         .res-box { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #2a2a2a; font-size: 0.9em; }
         .val { color: #2ecc71; font-weight: bold; }
         #camera-btn { background: #3498db; color: #fff; margin-bottom: 10px; }
+        #mic-btn { background: #e74c3c; color: #fff; margin-top: 5px; padding: 10px; font-size: 0.9em; }
         #wa-btn { background: #25d366; color: #fff; display:none; }
         .preview { width: 100%; border-radius: 8px; margin-top: 10px; display: none; border: 1px solid var(--p); }
+        .seccion-titulo { color: #f39c12; font-weight: bold; margin-top: 15px; border-bottom: 1px solid #444; display: block; font-size: 0.9em; }
     </style>
 </head>
 <body>
-<div class="header"><h1>ESTEVE 2.0 🤖</h1></div>
+<div class="header"><h1>ESTEVE 2.0 🤖🎙️</h1></div>
 
 <div class="card">
-    <h3>📸 Análisis IA de Cuadro</h3>
-    <button id="camera-btn" onclick="document.getElementById('file-input').click()">📸 TOMAR FOTO DEL CUADRO</button>
+    <h3>📸 Análisis de Cuadro</h3>
+    <button id="camera-btn" onclick="document.getElementById('file-input').click()">📸 TOMAR FOTO</button>
     <input type="file" id="file-input" accept="image/*" capture="environment" style="display:none" onchange="previewImage(event)">
     <img id="img-preview" class="preview">
-    <div id="ia-status" style="font-size: 0.8em; color: #2ecc71; margin-top: 5px; text-align: center; display:none;">Análisis de IA activado: Detectando espacio y protecciones...</div>
 </div>
 
 <div class="card">
-    <h3>🏗️ Datos del Proyecto</h3>
-    <label>Obra</label><input type="text" id="obra" placeholder="Ej: Nave Esteve">
+    <h3>🏗️ Datos y Material</h3>
+    <label>Obra</label><input type="text" id="obra" placeholder="Nombre obra">
     <div style="display:flex; gap:10px;">
-        <div style="flex:1;"><label>Nº Placas</label><input type="number" id="nP" value="10"></div>
-        <div style="flex:1;"><label>Nº Filas</label><input type="number" id="nF" value="1"></div>
+        <div style="flex:1;"><label>Placas</label><input type="number" id="nP" value="10"></div>
+        <div style="flex:1;"><label>Tejado</label><select id="tejado"><option value="Bovedilla">Bovedilla</option><option value="Sandwich">Sandwich</option></select></div>
     </div>
     <div style="display:flex; gap:10px;">
-        <div style="flex:1;"><label>Tejado</label><select id="tejado"><option value="Bovedilla">Bovedilla (Químico)</option><option value="Sandwich">Sandwich (Autoroscante)</option></select></div>
-        <div style="flex:1;"><label>Pot. Inversor</label><input type="number" id="pI" value="5"></div>
+        <div style="flex:1;"><label>Mts AC</label><input type="number" id="mAC" value="10"></div>
+        <div style="flex:1;"><label>Mts DC</label><input type="number" id="mDC" value="20"></div>
     </div>
-    <div style="display:flex; gap:10px;">
-        <div style="flex:1;"><label>Mts AC (Tubo)</label><input type="number" id="mAC" value="10"></div>
-        <div style="flex:1;"><label>Mts DC (Canal)</label><input type="number" id="mDC" value="20"></div>
-    </div>
+
+    <label>📝 Observaciones (Voz o Escrito)</label>
+    <textarea id="obs" rows="3" placeholder="Ej: El cuadro está en el garaje..."></textarea>
+    <button id="mic-btn" onclick="dictar()">🎤 DICTAR POR VOZ</button>
 </div>
 
-<button onclick="calcular()">GENERAR PEDIDO CON IA</button>
+<button onclick="calcular()">GENERAR PEDIDO TOTAL</button>
 <div id="resultado"></div>
-<button id="wa-btn" onclick="enviar()">📤 ENVIAR AL WHATSAPP DE LA EMPRESA</button>
+<button id="wa-btn" onclick="enviar()">📤 ENVIAR ALMACÉN</button>
 
 <script>
     let msgWA = "";
 
     function previewImage(event) {
-        const reader = new FileReader();
-        reader.onload = function(){
-            const output = document.getElementById('img-preview');
-            output.src = reader.result;
-            output.style.display = 'block';
-            document.getElementById('ia-status').style.display = 'block';
+        const output = document.getElementById('img-preview');
+        output.src = URL.createObjectURL(event.target.files[0]);
+        output.style.display = 'block';
+    }
+
+    function dictar() {
+        if (!('webkitSpeechRecognition' in window)) {
+            alert("Tu navegador no soporta dictado por voz. Prueba con Chrome.");
+            return;
+        }
+        const recognition = new webkitSpeechRecognition();
+        recognition.lang = 'es-ES';
+        recognition.start();
+        document.getElementById('mic-btn').innerText = "🔴 ESCUCHANDO...";
+        recognition.onresult = (event) => {
+            document.getElementById('obs').value += event.results[0][0].transcript + " ";
+            document.getElementById('mic-btn').innerText = "🎤 DICTAR POR VOZ";
         };
-        reader.readAsDataURL(event.target.files[0]);
+        recognition.onerror = () => { document.getElementById('mic-btn').innerText = "🎤 DICTAR POR VOZ"; };
     }
 
     function calcular() {
         const obra = document.getElementById('obra').value || "Sin nombre";
         const nP = parseInt(document.getElementById('nP').value);
-        const nF = parseInt(document.getElementById('nF').value);
-        const pI = parseFloat(document.getElementById('pI').value);
         const mAC = parseFloat(document.getElementById('mAC').value);
         const mDC = parseFloat(document.getElementById('mDC').value);
         const tejado = document.getElementById('tejado').value;
+        const obs = document.getElementById('obs').value;
 
-        // IA DE TORNILLERÍA Y ESTRUCTURA
-        const fijaciones = (Math.ceil(((1.13 * (nP/nF)) + 0.30) / 1.3) + 1) * 2 * nF;
-        const botesQuimico = tejado === "Bovedilla" ? Math.ceil(fijaciones / 8) : 0;
-        const tamices = tejado === "Bovedilla" ? fijaciones : 0;
-        const autoroscantes = tejado === "Sandwich" ? fijaciones * 4 : 0;
-        
-        // IA DE CANALIZACIÓN (1 grapa cada 1.5m)
-        const totalCanal = mAC + mDC;
-        const grapas = Math.ceil(totalCanal / 1.5);
-
-        // IA ELÉCTRICA
-        const amp = (pI * 1000) / 230;
-        let mag = amp < 16 ? 16 : amp < 20 ? 20 : amp < 25 ? 25 : 32;
+        const fijaciones = (Math.ceil(((1.13 * nP) + 0.30) / 1.3) + 1) * 2;
+        const grapas = Math.ceil((mAC + mDC) / 1.5);
 
         document.getElementById('resultado').innerHTML = `
             <div class="card" style="border-left-color: #2ecc71">
-                <h3>📦 LISTADO DE MATERIALES (IA)</h3>
-                <div class="res-box"><span>Escuadras/Arranques:</span><span class="val">${fijaciones} uds</span></div>
-                <div class="res-box"><span>Arandelas / Growers:</span><span class="val">${fijaciones*2} / ${fijaciones}</span></div>
-                ${tejado === "Bovedilla" ? `<div class="res-box"><span>Botes Químico / Tamices:</span><span class="val">${botesQuimico} / ${tamices}</span></div>` : `<div class="res-box"><span>Autoroscantes:</span><span class="val">${autoroscantes} uds</span></div>`}
-                <div class="res-box"><span>Grapas Met. (C1.5m):</span><span class="val">${grapas} uds</span></div>
-                <div class="res-box"><span>Tornillos + Tacos:</span><span class="val">${grapas} uds</span></div>
-                <div class="res-box"><span>Magneto / Dif:</span><span class="val">2P ${mag}A / Clase A</span></div>
+                <span class="seccion-titulo">🔩 MATERIAL CALCULADO</span>
+                <div class="res-box"><span>Escuadras:</span><span class="val">${fijaciones} uds</span></div>
+                <div class="res-box"><span>Grapas Met. (1.5m):</span><span class="val">${grapas} uds</span></div>
+                <div class="res-box"><span>Observaciones:</span><span class="val">${obs ? 'SÍ' : 'NO'}</span></div>
             </div>`;
         
         document.getElementById('wa-btn').style.display = 'block';
-        msgWA = `*PEDIDO IA: ${obra}*%0A🔩 Fijaciones: ${fijaciones} uds%0A🧪 Químico: ${botesQuimico} botes%0A🏗️ Grapas Met: ${grapas} uds%0A⚡ Magneto: 2P ${mag}A%0A🛡️ Dif: Clase A%0A📸 Análisis de cuadro realizado.`;
+        msgWA = `*PEDIDO: ${obra}*%0A🔩 Fijaciones: ${fijaciones}%0A🏗️ Grapas: ${grapas}%0A📝 *OBS:* ${obs}`;
     }
 
     function enviar() { window.open(`https://wa.me/?text=${msgWA}`, '_blank'); }
