@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESTEVE 2.0 - INGENIERÍA TOTAL</title>
+    <title>ESTEVE 2.0 - UNIVERSAL</title>
     <style>
         :root { --p: #f39c12; --bg: #0f0f0f; --card: #1a1a1a; --text: #e0e0e0; }
         body { font-family: sans-serif; background: var(--bg); color: var(--text); padding: 15px; margin: 0; }
@@ -12,76 +12,61 @@
         label { display: block; font-size: 0.8em; color: #888; margin-top: 10px; }
         input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; background: #252525; border: 1px solid #333; color: #fff; border-radius: 8px; box-sizing: border-box; }
         button { width: 100%; padding: 15px; background: var(--p); border: none; color: #000; font-weight: bold; border-radius: 8px; margin-top: 15px; cursor: pointer; font-size: 1.1em; }
-        .res-box { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #2a2a2a; font-size: 0.9em; }
+        .res-box { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #333; font-size: 0.9em; }
         .val { color: #2ecc71; font-weight: bold; }
         .seccion-titulo { color: #f39c12; font-weight: bold; margin-top: 15px; border-bottom: 1px solid #444; display: block; font-size: 0.9em; text-align: center; background: #222; padding: 5px; }
     </style>
 </head>
 <body>
 <div class="card">
-    <h3>🏗️ PROYECTO Y MATERIAL</h3>
-    <label>Obra</label><input type="text" id="obra" placeholder="Nombre obra">
+    <h3>🏗️ DATOS DE INSTALACIÓN</h3>
+    <label>Nombre de Obra</label><input type="text" id="obra" placeholder="Ej: Casa Juan o Nave Esteve">
     <div style="display:flex; gap:10px;">
-        <div style="flex:1;"><label>Placas</label><input type="number" id="nP" value="10"></div>
-        <div style="flex:1;"><label>Inversor (kW)</label><input type="number" id="pI" value="5"></div>
+        <div style="flex:1;"><label>Nº Placas</label><input type="number" id="nP" value="10"></div>
+        <div style="flex:1;"><label>Potencia (kW)</label><input type="number" id="pI" value="5"></div>
     </div>
     <div style="display:flex; gap:10px;">
         <div style="flex:1;"><label>Mts AC (Tubo)</label><input type="number" id="mAC" value="10"></div>
-        <div style="flex:1;"><label>Mts DC (Canal)</label><input type="number" id="mDC" value="20"></div>
+        <div style="flex:1;"><label>Mts DC (Canaleta)</label><input type="number" id="mDC" value="15"></div>
     </div>
-    <label>Tejado</label><select id="tejado"><option value="Bovedilla">Bovedilla</option><option value="Sandwich">Sandwich</option></select>
-    <label>📝 Observaciones (Voz/Texto)</label>
-    <textarea id="obs" rows="2"></textarea>
-    <button style="background:#e74c3c; color:white;" onclick="dictar()">🎤 DICTAR NOTA</button>
 </div>
 
-<button onclick="calcular()">GENERAR ANÁLISIS COMPLETO</button>
+<button onclick="calcular()">CALCULAR PEDIDO TÉCNICO</button>
 <div id="resultado"></div>
-<button id="wa-btn" style="display:none; background:#25d366; color:white;" onclick="enviar()">📤 ENVIAR A ALMACÉN</button>
+<button id="wa-btn" style="display:none; background:#25d366; color:white;" onclick="enviar()">📤 ENVIAR ALMACÉN</button>
 
 <script>
-    let msgWA = "";
-    function dictar() {
-        const recognition = new (window.webkitSpeechRecognition || window.SpeechRecognition)();
-        recognition.lang = 'es-ES'; recognition.start();
-        recognition.onresult = (e) => { document.getElementById('obs').value += e.results[0][0].transcript + " "; };
-    }
-
     function calcular() {
         const pI = parseFloat(document.getElementById('pI').value);
         const nP = parseInt(document.getElementById('nP').value);
         const mAC = parseFloat(document.getElementById('mAC').value);
         const mDC = parseFloat(document.getElementById('mDC').value);
-        const tejado = document.getElementById('tejado').value;
 
-        const escuadras = (Math.ceil(((1.13 * nP) + 0.30) / 1.3) + 1) * 2;
+        // 1. Perfiles: 2.3m por cada 2 placas (y redondeamos hacia arriba por retales)
+        const metrosPerfil = Math.ceil((nP / 2) * 2.3);
+        
+        // 2. Grapas: 1 cada 1.5 metros de canalización total
         const grapas = Math.ceil((mAC + mDC) / 1.5);
-        const amp = (pI * 1000) / 230;
-        let mag = amp < 16 ? 16 : amp < 20 ? 20 : amp < 25 ? 25 : 32;
+        
+        // 3. Lógica Eléctrica Automática
+        let mag, dif;
+        if (pI < 10) {
+            mag = "2P 25A"; dif = "2P 40A Clase A"; // Vivienda estándar
+        } else if (pI >= 10 && pI < 30) {
+            mag = "4P 40A"; dif = "4P 40A Clase A"; // Trifásica pequeña
+        } else {
+            mag = "4P 100A"; dif = "4P 100A Clase A"; // Gran Industria
+        }
+        
+        const escuadras = (Math.ceil(((1.13 * nP) + 0.30) / 1.3) + 1) * 2;
 
         document.getElementById('resultado').innerHTML = `
             <div class="card">
                 <span class="seccion-titulo">⚡ ALTERNATING (AC)</span>
-                <div class="res-box"><span>Magneto / Dif:</span><span class="val">2P ${mag}A / Clase A</span></div>
-                <div class="res-box"><span>Metros Tubo:</span><span class="val">${mAC}m</span></div>
+                <div class="res-box"><span>Magnetotérmico:</span><span class="val">${mag}</span></div>
+                <div class="res-box"><span>Diferencial:</span><span class="val">${dif}</span></div>
+                <div class="res-box"><span>Metros de Tubo:</span><span class="val">${mAC} m</span></div>
                 
                 <span class="seccion-titulo">☀️ CONTINUOUS (DC)</span>
-                <div class="res-box"><span>Inversor:</span><span class="val">${pI} kW</span></div>
-                <div class="res-box"><span>Metros Canaleta:</span><span class="val">${mDC}m</span></div>
-                <div class="res-box"><span>Grapas (1.5m):</span><span class="val">${grapas} uds</span></div>
-
-                <span class="seccion-titulo">🔩 TERMINALS / MATERIALS</span>
-                <div class="res-box"><span>Escuadras:</span><span class="val">${escuadras} uds</span></div>
-                <div class="res-box"><span>Tornillo+Taco+Arand:</span><span class="val">${escuadras*2} uds</span></div>
-
-                <span class="seccion-titulo">🛡️ GROUND</span>
-                <div class="res-box"><span>Puesta a tierra:</span><span class="val">OK (Placas y Estructura)</span></div>
-            </div>`;
-        
-        document.getElementById('wa-btn').style.display = 'block';
-        msgWA = `*PEDIDO:* ${pI}kW - ${nP} Placas%0A*AC:* Mag ${mag}A - Dif Clase A%0A*DC:* ${mDC}m Canaleta - ${grapas} Grapas%0A*MAT:* ${escuadras} Escuadras%0A*OBS:* ${document.getElementById('obs').value}`;
-    }
-    function enviar() { window.open("https://wa.me/?text=" + msgWA); }
-</script>
-</body>
-</html>
+                <div class="res-box"><span>Potencia Inversor:</span><span class="val">${pI} kW</span></div>
+                <div class="res-box">
