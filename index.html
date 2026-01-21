@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FREEPOWER IA - v3.8</title>
+    <title>FREEPOWER IA - v3.9</title>
     <style>
         :root { --blue: #00a8e8; --dark: #0a192f; --card: #112240; --text: #ccd6f6; --accent: #64ffda; }
         body { font-family: sans-serif; background: var(--dark); color: var(--text); padding: 5px; margin: 0; }
@@ -12,17 +12,17 @@
         label { font-size: 0.65em; color: var(--blue); font-weight: bold; display: block; margin-top: 4px; }
         input, select { width: 100%; padding: 8px; margin-top: 2px; background: #020c1b; border: 1px solid #233554; color: #fff; border-radius: 4px; font-size: 14px; box-sizing: border-box; }
         .btn-calc { width: 100%; padding: 12px; background: #52f3ca; color: var(--dark); border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
-        .res-box { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #333; font-size: 0.8em; }
-        .val-edit { background: transparent; border: 1px dashed var(--accent); color: var(--accent); text-align: right; width: 110px; font-weight: bold; }
-        .seccion { color: white; font-weight: bold; margin-top: 10px; display: block; background: #1b3a5d; padding: 6px; border-radius: 3px; font-size: 0.75em; text-align: center; border-bottom: 2px solid var(--blue); }
+        .res-box { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #333; font-size: 0.85em; }
+        .val-edit { background: transparent; border: 1px dashed var(--accent); color: var(--accent); text-align: right; width: 125px; font-weight: bold; font-size: 1em; }
+        .seccion { color: white; font-weight: bold; margin-top: 12px; display: block; background: #1b3a5d; padding: 8px; border-radius: 3px; font-size: 0.8em; text-align: center; border-bottom: 2px solid var(--blue); text-transform: uppercase; }
     </style>
 </head>
 <body>
 
 <div style="text-align:center; padding:10px;"><h2 style="color:white; margin:0; font-size:1.3em;">FREE<span style="color:var(--blue);">POWER</span> IA</h2></div>
 
-<div class="card">
-    <h3>⚙️ ENTRADA DE DATOS (Editables)</h3>
+<div class="card" id="form-container">
+    <h3>⚙️ ENTRADA DE DATOS (EDITABLES)</h3>
     <div style="display:flex; gap:4px;">
         <div style="flex:1;"><label>W Placa</label><input type="number" id="wP" value="450"></div>
         <div style="flex:1;"><label>Nº Placas</label><input type="number" id="nP" value="10"></div>
@@ -33,13 +33,13 @@
         <div style="flex:1;"><label>TA</label><select id="ta"><option>TA 10</option><option>TA 16</option><option>TA 36</option></select></div>
     </div>
     <div style="display:flex; gap:4px;">
-        <div style="flex:1.5;"><label>Mts Canal</label><input type="number" id="mC" value="10"></div>
+        <div style="flex:1.5;"><label>Mts Canalización</label><input type="number" id="mC" value="10"></div>
         <div style="flex:1;"><label>Pica</label><select id="pica"><option value="no">NO</option><option value="si">SÍ</option></select></div>
     </div>
     <button class="btn-calc" onclick="calcular()">GENERAR SIMULACIÓN</button>
 </div>
 
-<div id="res"></div>
+<div id="res-container"></div>
 
 <script>
 function calcular() {
@@ -57,17 +57,17 @@ function calcular() {
     const ampMag = red === 'mono' ? Math.ceil(potKw*1000/230*1.25) : Math.ceil(potKw*1000/692*1.25);
     const escuadras = (Math.ceil(nP / 1.5) + nF) * 2;
 
-    document.getElementById('res').innerHTML = `
+    document.getElementById('res-container').innerHTML = `
         <div class="card">
             <span class="seccion">⚡ ALTERNATING (AC)</span>
             <div class="res-box"><span>Toroidal:</span><input class="val-edit" value="${ta}"></div>
-            <div class="res-row res-box"><span>Magneto/Dif:</span><input class="val-edit" value="${ampMag}A / ${red=='mono'?'2P':'4P'}"></div>
+            <div class="res-box"><span>Magneto / Dif:</span><input class="val-edit" value="${ampMag}A / ${red=='mono'?'2P':'4P'}"></div>
             <div class="res-box"><span>Mts Cable:</span><input class="val-edit" value="${(mC*hilos).toFixed(1)}m"></div>
             <div class="res-box"><span>Punteras:</span><input class="val-edit" value="${red=='tri'?16:8} uds"></div>
 
             <span class="seccion">☀️ CONTINUOUS (DC)</span>
-            <div class="res-box"><span>Potencia:</span><input class="val-edit" value="${potKw} kWp"></div>
-            <div class="res-box"><span>Rojo / Negro:</span><input class="val-edit" value="${mC}m / ${mC}m"></div>
+            <div class="res-box"><span>Potencia Campo:</span><input class="val-edit" value="${potKw} kWp"></div>
+            <div class="res-box"><span>Cable Rojo/Negro:</span><input class="val-edit" value="${mC}m / ${mC}m"></div>
             <div class="res-box"><span>Parejas MC4:</span><input class="val-edit" value="${nF * 2} uds"></div>
 
             <span class="seccion">🌍 GROUND (TIERRA)</span>
@@ -78,8 +78,11 @@ function calcular() {
             <div class="res-box"><span>Mts Perfil:</span><input class="val-edit" value="${mP}m"></div>
             <div class="res-box"><span>Escuadras L:</span><input class="val-edit" value="${escuadras} uds"></div>
             <div class="res-box"><span>Tornillo/Taco:</span><input class="val-edit" value="${escuadras * 2} uds"></div>
-        </div>
-        <button class="btn-calc" style="background:#25d366; color:white;">📲 WHATSAPP</button>`;
+            
+            <button class="btn-calc" style="background:#25d366; color:white; margin-top:20px;">📲 ENVIAR WHATSAPP</button>
+        </div>`;
+    
+    window.scrollTo(0, document.body.scrollHeight);
 }
 </script>
 </body>
