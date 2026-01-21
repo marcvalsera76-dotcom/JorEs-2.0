@@ -9,15 +9,15 @@
         body { font-family: 'Segoe UI', sans-serif; background: var(--dark); color: var(--text); padding: 10px; margin: 0; }
         .header { text-align: center; padding: 15px; border-bottom: 2px solid var(--blue); margin-bottom: 15px; }
         .card { background: var(--card); padding: 18px; border-radius: 12px; margin-bottom: 15px; border-top: 3px solid var(--blue); box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        h3 { color: var(--blue); margin: 0 0 10px 0; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px; }
+        h3 { color: var(--blue); margin: 0 0 10px 0; font-size: 0.85em; text-transform: uppercase; letter-spacing: 1px; }
         label { display: block; font-size: 0.75em; color: var(--blue); margin-top: 8px; font-weight: bold; }
-        input, select, textarea { width: 100%; padding: 10px; margin-top: 5px; background: #020c1b; border: 1px solid #233554; color: #fff; border-radius: 6px; box-sizing: border-box; font-size: 15px; }
+        input, select, textarea { width: 100%; padding: 10px; margin-top: 5px; background: #020c1b; border: 1px solid #233554; color: #fff; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
         .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; text-transform: uppercase; transition: 0.3s; }
         .btn-ia { background: var(--blue); color: white; }
         .btn-calc { background: var(--accent); color: var(--dark); font-size: 1em; margin-top: 20px; }
-        .res-box { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #233554; font-size: 0.9em; }
-        .val { color: var(--accent); font-weight: bold; }
-        .seccion-titulo { color: var(--blue); font-weight: bold; margin-top: 12px; display: block; text-align: center; background: #172a45; padding: 6px; border-radius: 4px; font-size: 0.85em; }
+        .res-box { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #233554; font-size: 0.85em; }
+        .val-edit { background: transparent; border: 1px dashed var(--accent); color: var(--accent); font-weight: bold; text-align: right; width: 100px; padding: 2px 5px; border-radius: 4px; }
+        .seccion-titulo { color: var(--blue); font-weight: bold; margin-top: 12px; display: block; text-align: center; background: #172a45; padding: 6px; border-radius: 4px; font-size: 0.8em; }
         .copy-btn { background: #444; color: white; padding: 4px 8px; font-size: 0.7em; border-radius: 4px; float: right; cursor: pointer; border: none; }
     </style>
 </head>
@@ -28,107 +28,12 @@
 </div>
 
 <div class="card">
-    <h3>📸 CÁMARA IA INTERACTIVA</h3>
-    <label>Objetivo de la foto</label>
+    <h3>📸 ENTRADA DE DATOS (PLANOS / OBRA)</h3>
     <select id="tipoFoto">
-        <option value="Estructura">Análisis de Estructura / Cubierta</option>
-        <option value="Canalización">Medición de Canalización / Cableado</option>
+        <option value="Plano">Escaneo de Plano Técnico</option>
+        <option value="Estructura">Foto de Cubierta / Estructura</option>
+        <option value="Canalizacion">Foto de Canalización / Cuadro</option>
     </select>
-    <button class="btn btn-ia" onclick="document.getElementById('file-input').click()">📸 CAPTURAR E ANALIZAR</button>
+    <button class="btn btn-ia" onclick="document.getElementById('file-input').click()">📸 CAPTURAR Y ANALIZAR</button>
     <input type="file" id="file-input" accept="image/*" capture="environment" style="display:none" onchange="processIA()">
-    
-    <label>Instrucciones para la IA (Escrito o Voz)</label>
-    <textarea id="ia-prompt" placeholder="Ej: Mide la distancia hasta el cuadro o cuenta las tejas..."></textarea>
-    <div id="ia-response" style="font-size: 0.85em; color: var(--accent); margin-top: 10px; background: #020c1b; padding: 10px; border-radius: 5px; display:none; border-left: 3px solid var(--accent);"></div>
-</div>
-
-<div class="card">
-    <h3>🏗️ DATOS DE INGENIERÍA</h3>
-    <div style="display:flex; gap:8px;">
-        <div style="flex:1;"><label>Nº Inversores</label><input type="number" id="nI" value="1" min="1" max="20"></div>
-        <div style="flex:1;"><label>kW/Inv</label><input type="number" id="pI" value="5"></div>
-    </div>
-    <div style="display:flex; gap:8px;">
-        <div style="flex:1;"><label>Ancho Placa(mm)</label><input type="number" id="aP" value="1134"></div>
-        <div style="flex:1;"><label>Largo Placa(mm)</label><input type="number" id="lP" value="2279"></div>
-    </div>
-    <div style="display:flex; gap:8px;">
-        <div style="flex:1;"><label>Placas Totales</label><input type="number" id="nP" value="10"></div>
-        <div style="flex:1;"><label>Nº Filas</label><input type="number" id="nF" value="1"></div>
-    </div>
-    <label>Tipo de Cubierta / Fijación</label>
-    <select id="tC">
-        <option value="chapa">Cubierta Chapa (Polímero)</option>
-        <option value="hormigon">Hormigón (Químico + Tamiz)</option>
-        <option value="tejado">Tejado (Arranques / Varilla)</option>
-    </select>
-</div>
-
-<div class="card">
-    <h3>🛠️ MEDICIÓN DE INSTALACIÓN</h3>
-    <div style="display:flex; gap:8px;">
-        <div style="flex:1;"><label>Mts Canaleta DC</label><input type="number" id="mDC" value="0"></div>
-        <div style="flex:1;"><label>Mts Tubo AC</label><input type="number" id="mAC" value="0"></div>
-    </div>
-    <label>Observaciones Varias</label>
-    <textarea id="obs" placeholder="Detalles adicionales de la obra..."></textarea>
-</div>
-
-<button class="btn btn-calc" onclick="generarPedido()">GENERAR PEDIDO Y UNIFILAR</button>
-
-<div id="resultado"></div>
-
-<script>
-    function processIA() {
-        const res = document.getElementById('ia-response');
-        const tipo = document.getElementById('tipoFoto').value;
-        res.style.display = 'block';
-        res.innerText = "IA ANALIZANDO (" + tipo + ")... \nRespuesta: Se detectan dimensiones compatibles. Margen de error estimado 7%. Datos enviados a la tabla de medidas.";
-    }
-
-    function generarPedido() {
-        const nI = parseInt(document.getElementById('nI').value);
-        const pI = parseFloat(document.getElementById('pI').value);
-        const nP = parseInt(document.getElementById('nP').value);
-        const aP = parseFloat(document.getElementById('aP').value) / 1000;
-        const nF = parseInt(document.getElementById('nF').value);
-        const mAC = parseFloat(document.getElementById('mAC').value);
-        const mDC = parseFloat(document.getElementById('mDC').value);
-        const tC = document.getElementById('tC').value;
-
-        const potTotal = nI * pI;
-        const cableAC = potTotal > 6 ? mAC * 4 : mAC * 3;
-        const mtsPerfil = Math.ceil(((aP * nP) + (nP * 0.02)) + (nF * 0.5));
-        const escuadras = (Math.ceil(nP / 1.5) + nF) * 2;
-        const sens = potTotal < 10 ? "30mA" : "300mA";
-        
-        let fijacionDetalle = tC === "chapa" ? "Polímero MS: 1 bote" : (tC === "hormigon" ? "Taco Químico + Tamices" : "Varilla + Arranques");
-
-        document.getElementById('resultado').innerHTML = `
-            <div class="card">
-                <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('resultado').innerText)">COPIAR</button>
-                <span class="seccion-titulo">⚡ PROTECCIONES Y ALTERNA (AC)</span>
-                <div class="res-box"><span>Potencia Total Inv:</span><span class="val">${potTotal} kW</span></div>
-                <div class="res-box"><span>Diferencial:</span><span class="val">${sens}</span></div>
-                <div class="res-box"><span>Mts Cable AC (Hilos):</span><span class="val">${cableAC} m</span></div>
-                <div class="res-box"><span>Mts Canalización AC:</span><span class="val">${mAC} m</span></div>
-                <div class="res-box"><span>Terminales Puntera:</span><span class="val">${nI * 8} uds</span></div>
-
-                <span class="seccion-titulo">☀️ CAMPO SOLAR Y CONTINUA (DC)</span>
-                <div class="res-box"><span>Mts Perfil Guía:</span><span class="val">${mtsPerfil} m</span></div>
-                <div class="res-box"><span>Mts Cable DC (R/N):</span><span class="val">${mDC * 2} m</span></div>
-                <div class="res-box"><span>Mts Canalización DC:</span><span class="val">${mDC} m</span></div>
-                <div class="res-box"><span>Parejas MC4:</span><span class="val">${nF * 2} uds</span></div>
-
-                <span class="seccion-titulo">🔩 MATERIAL DE FIJACIÓN (1:1)</span>
-                <div class="res-box"><span>Escuadras L:</span><span class="val">${escuadras} uds</span></div>
-                <div class="res-box"><span>Tornillo/Taco/Arand:</span><span class="val">${escuadras} uds c/u</span></div>
-                <div class="res-box"><span>Tipo Fijación:</span><span class="val">${fijacionDetalle}</span></div>
-                
-                <span class="seccion-titulo">🌍 GROUND (TIERRA)</span>
-                <div class="res-box"><span>Puntos de Tierra:</span><span class="val">${nP + nI} conexiones</span></div>
-            </div>`;
-    }
-</script>
-</body>
-</html>
+    <div id="ia-response" style="font-size: 0.8em; color: var(--accent); margin-top: 10px; background: #020c1b; padding: 10
