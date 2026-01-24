@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FREEPOWER IA - MULTIMEDIA TOTAL</title>
+    <title>FREEPOWER IA - v4.9 PROFESIONAL</title>
     <style>
         :root { --blue: #00a8e8; --dark: #020c1b; --card: #112240; --text: #ccd6f6; --accent: #64ffda; --orange: #f39c12; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--dark); color: var(--text); padding: 8px; margin: 0; }
@@ -16,7 +16,6 @@
         .btn-media { background: #1b3a5d; color: white; border: 2px dashed var(--accent); padding: 20px; width: 100%; border-radius: 10px; margin-bottom: 10px; font-weight: bold; cursor: pointer; display: block; text-align: center; }
         .preview-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 8px; margin-top: 10px; }
         .preview-item { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 6px; border: 1px solid var(--accent); }
-        .video-label { background: #333; display: flex; align-items: center; justify-content: center; font-size: 10px; color: white; aspect-ratio: 1/1; border-radius: 6px; border: 1px solid var(--orange); }
         .seccion { background: #1b3a5d; color: white; padding: 10px; border-radius: 5px; font-size: 0.85em; font-weight: bold; text-align: center; margin-top: 15px; border-bottom: 3px solid var(--orange); }
         .res-box { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #233554; font-size: 0.9em; }
         .val-edit { background: transparent; border: none; color: var(--accent); text-align: right; width: 55%; font-weight: bold; font-size: 1.1em; pointer-events: none; }
@@ -25,87 +24,25 @@
 <body>
 
 <div style="text-align:center; padding:15px; border-bottom: 2px solid var(--blue); margin-bottom:15px;">
-    <h2 style="margin:0; color:white; letter-spacing: 2px;">FREE<span style="color:var(--blue);">POWER</span> IA</h2>
+    <h2 style="margin:0; color:white;">FREE<span style="color:var(--blue);">POWER</span> IA</h2>
 </div>
 
 <div class="card">
     <h3>📸 RELEVAMIENTO MULTIMEDIA (FOTOS/VÍDEO)</h3>
     <label class="btn-media">
-        ➕ HACER FOTOS O GRABAR VÍDEO
+        ➕ AÑADIR REGISTRO VISUAL
         <input type="file" id="mediaInput" accept="image/*,video/*" multiple capture="environment" style="display:none;" onchange="handleMedia(this)">
     </label>
     <div id="preview" class="preview-container"></div>
 </div>
 
 <div class="card">
-    <h3>⚙️ PARÁMETROS DE LA INSTALACIÓN</h3>
+    <h3>⚙️ PLACAS, ESTRUCTURA E INVERSOR</h3>
     <div class="grid">
-        <div><label>Pot. Placa (W)</label><input type="number" id="wP" value="450"></div>
+        <div><label>W Placa</label><input type="number" id="wP" value="450"></div>
         <div><label>Nº Placas</label><input type="number" id="nP" value="10"></div>
         <div><label>Nº Filas</label><input type="number" id="nF" value="1"></div>
         <div><label>Nº Inversores</label><input type="number" id="nInv" value="1"></div>
     </div>
-    <div class="grid">
-        <div><label>Pot. Inv (kW)</label><input type="number" id="kWInv" value="5"></div>
-        <div><label>Canalización (m)</label><input type="number" id="mC" value="15"></div>
-    </div>
-    <button class="btn-calc" onclick="generarInforme()">GENERAR DESPIECE TÉCNICO</button>
-</div>
-
-<div id="resultado-final"></div>
-
-<script>
-let filesArray = [];
-
-function handleMedia(input) {
-    const preview = document.getElementById('preview');
-    for (const file of input.files) {
-        filesArray.push(file);
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            if (file.type.startsWith('image/')) {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.className = 'preview-item';
-                preview.appendChild(img);
-            } else {
-                const vid = document.createElement('div');
-                vid.className = 'video-label';
-                vid.innerHTML = '🎥 VÍDEO';
-                preview.appendChild(vid);
-            }
-        }
-        reader.readAsDataURL(file);
-    }
-}
-
-function generarInforme() {
-    const nP = parseInt(document.getElementById('nP').value);
-    const nF = parseInt(document.getElementById('nF').value);
-    const wP = parseInt(document.getElementById('wP').value);
-    const mC = parseFloat(document.getElementById('mC').value);
-    const nInv = parseInt(document.getElementById('nInv').value);
-    const kWInv = parseFloat(document.getElementById('kWInv').value);
-    
-    const mP = ((1.134 * nP) + (0.02 * (nP - nF)) + (nF * 0.20)).toFixed(2);
-    const escuadras = (Math.ceil(nP / 1.5) + nF) * 2;
-    const fotos = filesArray.filter(f => f.type.startsWith('image/')).length;
-    const videos = filesArray.filter(f => f.type.startsWith('video/')).length;
-
-    document.getElementById('resultado-final').innerHTML = `
-        <div class="card">
-            <div class="seccion">📦 ARCHIVOS ADJUNTOS</div>
-            <div class="res-box"><span>Fotos / Vídeos:</span><input class="val-edit" value="${fotos} F / ${videos} V"></div>
-            
-            <div class="seccion">🏗️ PLACAS Y ESTRUCTURA</div>
-            <div class="res-box"><span>Metros Perfil:</span><input class="val-edit" value="${mP} m"></div>
-            <div class="res-box"><span>Grapas (Fin/Int):</span><input class="val-edit" value="${nF*4} / ${(nP-nF)*2} uds"></div>
-            <div class="res-box"><span>Escuadras L:</span><input class="val-edit" value="${escuadras} uds"></div>
-
-            <div class="seccion">⚡ INVERSOR Y ELÉCTRICO</div>
-            <div class="res-box"><span>Inversores:</span><input class="val-edit" value="${nInv} ud x ${kWInv}kW"></div>
-            <div class="res-box"><span>Magnetotérmico:</span><input class="val-edit" value="${Math.ceil((kWInv*1000/230)*1.25)}A"></div>
-
-            <div class="seccion">🔌 CANALIZACIÓN Y CABLE</div>
-            <div class="res-box"><span>Manguera AC:</span><input class="val-edit
-            
+    <div class="grid
+        
